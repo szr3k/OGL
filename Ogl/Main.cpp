@@ -21,16 +21,24 @@ float vertices[] = {
 
 std::string vs =	"#version 330 core \n\
 					layout(location = 0) in vec3 aPos; \n\
+					uniform float fRotate; \n\
 					void main()\n\
 					{ \n\
-					gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0); \n\
+					vec2 uPosition = vec2(0.0,0.0); \n\
+					uPosition.x = (cos(fRotate)*aPos.x)-(sin(fRotate)*aPos.y); \n\
+					uPosition.y = (cos(fRotate)*aPos.y) + (sin(fRotate)*aPos.x); \n\
+					gl_Position = vec4(uPosition.x , uPosition.y, aPos.z, 1.0); \n\
 					}";
 const char *c_str = vs.c_str();
 
 std::string fs = "#version 330 core \n\
 					out vec4 FragColor; \n\
+					uniform float fPlusColorr; \n\
+					uniform float fPlusColorg; \n\
+					uniform float fPlusColorb; \n\
 					void main()\n\
-					{ FragColor = vec4(0.0f, 0.5f, 0.2f, 1.0f);\n\
+					{ \n\
+					FragColor = vec4(0.0f , 0.0f, (fPlusColorb), 1);\n\
 					}";
 const char *f_str = fs.c_str();
 
@@ -42,6 +50,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_FLOATING,1);
 
 														 // glfw window creation
 														 // --------------------
@@ -141,7 +150,11 @@ int main()
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(VAO);
 
+	// rotation
 
+	float fRotate = 1;
+
+	
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -152,8 +165,17 @@ int main()
 
 		// render
 		// ------
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float timevalue = glfwGetTime();
+		float fPlusColorr = (sin(timevalue));
+		float fPlusColorg = (sin(timevalue));
+		float fPlusColorb = (sin(timevalue));
+		glUniform1f(glGetUniformLocation(shaderProgram, "fRotate"), fRotate);
+		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorr"), fPlusColorr);
+		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorg"), fPlusColorg);
+		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorb"), fPlusColorb);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0, 0.0f, 1.0f);
 
 		
 		
@@ -162,6 +184,8 @@ int main()
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		fRotate += 0.001;
+	
 	}
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
