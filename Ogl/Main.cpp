@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
+#include "shader.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -13,34 +14,11 @@ const unsigned int SCR_HEIGHT = 600;
 //variables and data
 
 unsigned int VBO;
-float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f,  0.5f, 0.0f
-};
+float vertices[] = {0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   
+					-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   
+					0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f};
 
-std::string vs =	"#version 330 core \n\
-					layout(location = 0) in vec3 aPos; \n\
-					uniform float fRotate; \n\
-					void main()\n\
-					{ \n\
-					vec2 uPosition = vec2(0.0,0.0); \n\
-					uPosition.x = (cos(fRotate)*aPos.x)-(sin(fRotate)*aPos.y); \n\
-					uPosition.y = (cos(fRotate)*aPos.y) + (sin(fRotate)*aPos.x); \n\
-					gl_Position = vec4(uPosition.x , uPosition.y, aPos.z, 1.0); \n\
-					}";
-const char *c_str = vs.c_str();
 
-std::string fs = "#version 330 core \n\
-					out vec4 FragColor; \n\
-					uniform float fPlusColorr; \n\
-					uniform float fPlusColorg; \n\
-					uniform float fPlusColorb; \n\
-					void main()\n\
-					{ \n\
-					FragColor = vec4(0.0f , 0.0f, (fPlusColorb), 1);\n\
-					}";
-const char *f_str = fs.c_str();
 
 int main()
 {
@@ -77,83 +55,24 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	// Create VerteX Shader
-
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &c_str, NULL);
-	glCompileShader(vertexShader);
-
-	int  success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-		{
-			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-		}
-
-	//Create Fragment Shader
-
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &f_str, NULL);
-	glCompileShader(fragmentShader);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Create Shader Program
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	// Link Program + Shader
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	GLint isLinked = 0;
-	if (isLinked == GL_FALSE)
-	{
-		GLint maxLength = 0;
-		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &maxLength);
-
-		
-		// In this simple program, we'll just leave
-	
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	// Activate Program
-
-	glUseProgram(shaderProgram);
-
-	//Point Attributes
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
 	// Create Vertex Array Object
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	
+	//Point Attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	glBindVertexArray(VAO);
-
+	
 	// rotation
 
 	float fRotate = 1;
-
+	Shader ourShader("../res/vertexshader.vs", "../res/fragmentshader.fs");
 	
 	// render loop
 	// -----------
@@ -165,17 +84,10 @@ int main()
 
 		// render
 		// ------
-		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		float timevalue = glfwGetTime();
-		float fPlusColorr = (sin(timevalue));
-		float fPlusColorg = (sin(timevalue));
-		float fPlusColorb = (sin(timevalue));
-		glUniform1f(glGetUniformLocation(shaderProgram, "fRotate"), fRotate);
-		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorr"), fPlusColorr);
-		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorg"), fPlusColorg);
-		glUniform1f(glGetUniformLocation(shaderProgram, "fPlusColorb"), fPlusColorb);
+		ourShader.use();
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.0f, 0.0, 0.0f, 1.0f);
+		glClearColor(1.0f, 0.0, 0.0f, 1.0f);
 
 		
 		
@@ -184,7 +96,7 @@ int main()
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		fRotate += 0.001;
+		ourShader.setFloat("fRotate", fRotate+0.001);
 	
 	}
 
