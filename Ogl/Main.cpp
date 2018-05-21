@@ -236,7 +236,8 @@ int main()
 
 	//camera section
 
-
+	int fps=0;
+	float secondTime = 0.0f;
 	
 
 	while (!glfwWindowShouldClose(window))
@@ -287,7 +288,15 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		std::cout << 60 / deltaTime << std::endl;
+		fps++;
+		secondTime += deltaTime;
+
+		if (secondTime >= 1)
+		{
+			std::cout << fps << std::endl;
+			fps = 0;
+			secondTime = 0.0f;
+		}
 
 		
 	}
