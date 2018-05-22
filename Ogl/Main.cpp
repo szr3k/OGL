@@ -140,6 +140,7 @@ int main()
 	}
 
 	Shader ourShader("../res/vertexshader.vs", "../res/fragmentshader.fs","pierwszy");
+	Shader ourShader2("../res/vertexshader.vs", "../res/fragmentshader.fs", "pierwszy");
 	Shader lampShader("../res/lampshader.vs", "../res/lampshader.fs", "drugi");
 
 	//Enable Depth Buffer
@@ -147,7 +148,7 @@ int main()
 
 	// Generate Vertex Buffer Object
 	////iNIT ID for VertexBufferObject, VertexArrayObject, ElementBufferObject, generate and bind to IDS
-	unsigned int VBO, cubeVAO, lightVAO;
+	unsigned int VBO, cubeVAO, lightVAO, cube2VAO;
 	
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &VBO);
@@ -156,6 +157,19 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	
 	glBindVertexArray(cubeVAO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glGenVertexArrays(1, &cube2VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(cube2VAO);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -192,6 +206,17 @@ int main()
 		ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		ourShader.setVec3("lightPos", lightPos);
+		ourShader.setVec3("material.ambient", 0.0215f, 0.17455f, 0.0215f);
+		ourShader.setVec3("material.diffuse", 0.07568f, 0.61424f, 0.07568f);
+		ourShader.setVec3("material.specular", 0.633f, 0.727811f, 0.633f);
+		ourShader.setFloat("material.shininess", 128* 0.6f);
+		ourShader.setVec3("viewPos", cameraPos + cameraFront);
+		ourShader.setVec3("light.ambient", 1.0f, 1.0f, 1.0f);
+		ourShader.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f); // darken the light a bit to fit the scene
+		ourShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+	
+
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
@@ -199,9 +224,47 @@ int main()
 		// calculate the model matrix for each object and pass it to shader before drawing
 		// world transformation
 		glm::mat4 model;
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ourShader.setMat4("model", model);
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+		//2 cube
+
+		ourShader2.use();
+		ourShader2.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
+		ourShader2.setVec3("lightColor", 1.0f, 0.0f, 1.0f);
+		ourShader2.setVec3("lightPos", lightPos);
+		ourShader2.setVec3("material.ambient", 0.23125f, 0.23125f, 0.23125f);
+		ourShader2.setVec3("material.diffuse", 0.2775f, 0.2775f, 0.2775f);
+		ourShader2.setVec3("material.specular", 0.773911f, 0.773911f, 0.773911f);
+		ourShader2.setFloat("material.shininess", 89.6f);
+		ourShader2.setVec3("viewPos", cameraPos + cameraFront);
+		ourShader2.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		ourShader2.setVec3("light.diffuse", 1.0f, 1.0f, 1.0f); // darken the light a bit to fit the scene
+		ourShader2.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+
+
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		ourShader.setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+		ourShader.setMat4("view", view);
+		// calculate the model matrix for each object and pass it to shader before drawing
+		// world transformation
+		
+		
+		//model = glm::mat4();
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 2.0f, 0.0f));
+		ourShader.setMat4("model", model);
+		glBindVertexArray(cube2VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+
+	
 
 		// also draw the lamp object
 		lampShader.use();
@@ -210,6 +273,7 @@ int main()
 		model = glm::mat4();
 		model = glm::translate(model, lightPos);
 		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+		
 		lampShader.setMat4("model", model);
 
 		glBindVertexArray(lightVAO);

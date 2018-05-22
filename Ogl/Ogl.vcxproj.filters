@@ -35,5 +35,8 @@
     <ClInclude Include="Fpscounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="materialdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
