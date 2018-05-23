@@ -9,9 +9,14 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Files">
+      <UniqueIdentifier>{ccfdf18e-5312-48b6-8023-fc95a98c2b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Shaders">
+      <UniqueIdentifier>{35017a7a-7280-4f02-acb7-c99514f3139b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Textures">
+      <UniqueIdentifier>{60643760-efe5-4837-b785-44b05e0690e8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,5 +43,45 @@
     <ClInclude Include="materialdef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ogl.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\res\fragmentshader.fs">
+      <Filter>Files\Shaders</Filter>
+    </None>
+    <None Include="..\res\lampshader.fs">
+      <Filter>Files\Shaders</Filter>
+    </None>
+    <None Include="..\res\lampshader.vs">
+      <Filter>Files\Shaders</Filter>
+    </None>
+    <None Include="..\res\vertexshader.vs">
+      <Filter>Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\container.jpg">
+      <Filter>Files\Textures</Filter>
+    </Image>
+    <Image Include="..\res\container2.jpg">
+      <Filter>Files\Textures</Filter>
+    </Image>
+    <Image Include="..\res\matrix.jpg">
+      <Filter>Files\Textures</Filter>
+    </Image>
+    <Image Include="..\res\spec.jpg">
+      <Filter>Files\Textures</Filter>
+    </Image>
+    <Image Include="..\res\spec2.jpg">
+      <Filter>Files\Textures</Filter>
+    </Image>
+    <Image Include="..\res\container.png">
+      <Filter>Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

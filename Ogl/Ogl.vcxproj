@@ -157,9 +157,27 @@
   <ItemGroup>
     <ClInclude Include="Fpscounter.h" />
     <ClInclude Include="materialdef.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ogl.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\res\fragmentshader.fs" />
+    <None Include="..\res\lampshader.fs" />
+    <None Include="..\res\lampshader.vs" />
+    <None Include="..\res\vertexshader.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\container.jpg" />
+    <Image Include="..\res\container.png" />
+    <Image Include="..\res\container2.jpg" />
+    <Image Include="..\res\matrix.jpg" />
+    <Image Include="..\res\spec.jpg" />
+    <Image Include="..\res\spec2.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
